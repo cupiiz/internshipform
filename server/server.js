@@ -5,7 +5,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/api/internshipform', apiRouter);
+app.use('/api/therunway_internship', apiRouter);
 
 app.listen(process.env.PORT || '3000', () => {
 
