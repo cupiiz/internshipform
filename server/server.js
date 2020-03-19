@@ -4,6 +4,8 @@ const apiRouterAdmin = require('./routes/admin');
 const apiRouterTeams = require('./routes/teams');
 const apiRouterPositions = require('./routes/positions');
 const apiRouterUniversities = require('./routes/universities');
+const apiRouterApplication = require('./routes/application');
+const apiRouterMentors = require('./routes/mentors');
 const bodyParser = require('body-parser');
 const app = express();
 
@@ -33,7 +35,8 @@ app.use('/api', apiRouterAdmin);
 app.use('/api', apiRouterTeams);
 app.use('/api', apiRouterPositions);
 app.use('/api', apiRouterUniversities);
-
+app.use('/api', apiRouterApplication);
+app.use('/api', apiRouterMentors);
 //Port
 app.listen(process.env.PORT || '8000', () => {
   console.log(`Server is running on port: ${process.env.PORT || '8000'}`);

@@ -1,13 +1,12 @@
 const sql = require('../db');
 
-exports.getPosition = (req, res) => {
+exports.getMentors = (req, res) => {
 
     try {
         const sqlQuery = `
-            SELECT positions.id AS position_id, positions.positions_name, teams.team_name ,positions.team_id
-            FROM positions
-            INNER JOIN teams
-            ON positions.team_id = teams.id
+            SELECT id AS mentor_id, firstname, lastname, email, phonenumber
+            FROM therunway_internship.mentors
+            
         `
         sql.query(sqlQuery, async (err, results) => {
             if (err) {
@@ -27,13 +26,16 @@ exports.getPosition = (req, res) => {
 
 };
 
-exports.createPosition = (req, res) => {
-    const position_name = req.body.position_name;
-    const team_id = req.body.team_id;
+exports.createMentors = (req, res) => {
+    const mentor_firstname = req.body.mentor_firstname;
+    const mentor_lastname = req.body.mentor_lastname;
+    const mentor_email = req.body.mentor_email;
+    const mentor_phonenumber = req.body.mentor_phonenumber;
+    
     try {
         const sqlQuery = `
-            INSERT INTO positions ( positions_name, team_id ) 
-            VALUES ( '${position_name}', '${team_id}' )
+            INSERT INTO mentors ( firstname,lastname,email,phonenumber ) 
+            VALUES ( '${mentor_firstname}', '${mentor_lastname}', '${mentor_email}', '${mentor_phonenumber}' )
         `
         sql.query(sqlQuery, async (err, results) => {
 
@@ -55,17 +57,21 @@ exports.createPosition = (req, res) => {
 
 };
 
-exports.updatePosition = (req, res) => {
-    const position_name = req.body.position_name;
-    const position_id = req.body.position_id;
-    const team_id = req.body.team_id;
+exports.updateMentors = (req, res) => {
+    const mentor_firstname = req.body.mentor_firstname;
+    const mentor_lastname = req.body.mentor_lastname;
+    const mentor_email = req.body.mentor_email;
+    const mentor_phonenumber = req.body.mentor_phonenumber;
+    const mentor_id = req.body.mentor_id;
     try {
-        
         const sqlQuery = `
-            UPDATE positions
-            SET positions_name='${position_name}',
-            team_id ='${team_id}' 
-            WHERE id='${position_id}'
+            UPDATE mentors
+            SET firstname ='${mentor_firstname}',
+            lastname ='${mentor_lastname}',
+            email ='${mentor_email}',
+            phonenumber ='${mentor_phonenumber}'
+            
+            WHERE id='${mentor_id}'
         `
         sql.query(sqlQuery, async (err, results) => {
 
@@ -86,12 +92,12 @@ exports.updatePosition = (req, res) => {
     }
 };
 
-exports.deletePosition = (req, res) => {
-    const position_id = req.body.position_id;
+exports.deleteMentors = (req, res) => {
+    const mentor_id = req.body.mentor_id;
     try {
         const sqlQuery = `
-            DELETE FROM positions
-            WHERE id='${position_id}'
+            DELETE FROM mentors
+            WHERE id='${mentor_id}'
         `
         sql.query(sqlQuery, async (err, results) => {
 
