@@ -1,5 +1,5 @@
 const sql = require('../db');
-
+const smtp = require('./function/sentMail');
 exports.getApplication = (req, res) => {
 
     try {
@@ -7,7 +7,7 @@ exports.getApplication = (req, res) => {
             SELECT applications.id AS  application_id, 
             applications.internship_startdate, 
             applications.internship_enddate,
-            applications.internship_resume,
+           
             students.firstname,
             students.lastname,
             students.email,
@@ -16,16 +16,15 @@ exports.getApplication = (req, res) => {
             faculties.faculty_name,
             branches.branch_name,
             teams.team_name,
-            positions.positions_name,
-            mentors.firstname,
-            mentors.lastname
+            positions.positions_name
+            
 
 
 
-            FROM applications
+            FROM therunway_internship.applications
 
             INNER JOIN students
-            ON applications.application_id = students.id
+            ON applications.student_id = students.id
 
             INNER JOIN universities
             ON applications.university_id = universities.id
@@ -42,8 +41,7 @@ exports.getApplication = (req, res) => {
             INNER JOIN positions
             ON applications.position_id = positions.id
 
-            INNER JOIN mentors
-            ON applications.mentor_id = mentors.id
+          
         `
         sql.query(sqlQuery, async (err, results) => {
             if (err) {
@@ -74,53 +72,50 @@ exports.createApplication = (req, res) => {
     const university_id = req.body.university_id;
     const position_id = req.body.position_id;
     const team_id = req.body.team_id;
-
+    const internship_resume = req.body.internship_resume;
     const faculty_name = req.body.faculty_name;
     const branch_name = req.body.branch_name;
+    
+
+    let student_id = 0;
+    let faculty_id = 0;
+    let branch_id = 0;
+
     try {
         const sqlQuery = `
             INSERT INTO students
-            ( firstname,
+            (   firstname,
                 lastname,
                 email,
                 phonenumber ) 
             VALUES ( '${first_name}', '${last_name}', '${email}', '${phoneNumber}' )
             
         `
-        sql.query(sqlQuery, async (err, students_results) => {
-
+        sql.query(sqlQuery, async (err, responStudent) => {
             if (err) {
                 // throw err
                 const message = 'server error!';
                 const status = 500;
                 return res.status(status).json({ message: message, code: status, err: err });
             } else {
-                const sqlQuery = `
-                INSERT INTO faculties
-                (   faculty_name
 
-                    ) 
-                VALUES ( '${faculty_name}' )
-                
-            `
-                sql.query(sqlQuery, async (err, faculties_results) => {
+                // set student id 
+                student_id = responStudent.insertId;
 
+
+                const sqlQuery = ` INSERT INTO faculties ( faculty_name, university_id ) VALUES ( '${faculty_name}','${university_id}' ) `
+                sql.query(sqlQuery, async (err, responFaculties) => {
                     if (err) {
                         // throw err
                         const message = 'server error!';
                         const status = 500;
                         return res.status(status).json({ message: message, code: status, err: err });
                     } else {
-                        const sqlQuery = `
-                INSERT INTO branches
-                (   
-                    branch_name
+                        faculty_id = responFaculties.insertId;
 
-                    ) 
-                VALUES ( '${branch_name}')
-                
-            `
-                        sql.query(sqlQuery, async (err, branches_results) => {
+
+                        const sqlQuery = ` INSERT INTO branches ( branch_name,faculty_id) VALUES ( '${branch_name}', '${faculty_id}')`
+                        sql.query(sqlQuery, async (err, responBranches) => {
 
                             if (err) {
                                 // throw err
@@ -128,18 +123,29 @@ exports.createApplication = (req, res) => {
                                 const status = 500;
                                 return res.status(status).json({ message: message, code: status, err: err });
                             } else {
+                                branch_id = responBranches.insertId;
                                 const sqlQuery = `
-                INSERT INTO applications
-                (   internship_startdate,
-                    internship_enddate,
-                    university_id,
-                    team_id,
-                    position_id,
-
-                    ) 
-                VALUES ( '${internship_startdate}', '${internship_enddate}', '${university_id}', '${team_id}', '${position_id}' )
-                
-            `
+                                    INSERT INTO applications
+                                    (   internship_startdate,
+                                        internship_enddate,
+                                        internship_resume,
+                                        student_id,
+                                        university_id,
+                                        faculty_id,
+                                        branch_id,
+                                        team_id,
+                                        position_id ) 
+                                    VALUES ( 
+                                        '${internship_startdate}',
+                                        '${internship_enddate}',
+                                        '${internship_resume}',
+                                        '${student_id}',
+                                        '${university_id}',
+                                        '${faculty_id}',
+                                        '${branch_id}',
+                                        '${team_id}',
+                                        '${position_id}' 
+                                    ) `
                                 sql.query(sqlQuery, async (err, applications_results) => {
 
                                     if (err) {
@@ -148,14 +154,15 @@ exports.createApplication = (req, res) => {
                                         const status = 500;
                                         return res.status(status).json({ message: message, code: status, err: err });
                                     } else {
-                                        const message = 'create position success!';
+                                        smtp.setMail( email )
+                                        
                                         return res.status(200).json({ status: 200, message: message, results: applications_results });
                                     }
                                 });
                             }
                         });
                     }
-                });
+                })
             }
         });
     } catch (err) {

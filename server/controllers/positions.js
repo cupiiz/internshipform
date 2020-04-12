@@ -5,7 +5,7 @@ exports.getPosition = (req, res) => {
     try {
         const sqlQuery = `
             SELECT positions.id AS position_id, positions.positions_name, teams.team_name ,positions.team_id
-            FROM positions
+            FROM therunway_internship.positions
             INNER JOIN teams
             ON positions.team_id = teams.id
         `
