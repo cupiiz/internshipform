@@ -32,26 +32,42 @@ exports.createPosition = (req, res) => {
     const team_id = req.body.team_id;
     try {
         const sqlQuery = `
-            INSERT INTO positions ( positions_name, team_id ) 
-            VALUES ( '${position_name}', '${team_id}' )
+        SELECT positions_name
+        FROM positions
+        WHERE positions_name = '${position_name}'; 
         `
         sql.query(sqlQuery, async (err, results) => {
-
+            console.log(results);
             if (err) {
                 // throw err
                 const message = 'server error!';
                 const status = 500;
                 return res.status(status).json({ message: message, code: status, err: err });
-            } else {
-                const message = 'create position success!';
-                return res.status(200).json({ status: 200, message: message, results: results });
+
             }
-        });
-    } catch (err) {
-            const message = 'server error!';
-            const status = 500;
-            return res.status(status).json({ message: message, code: status });
-    }
+            console.log(results.length);
+
+            if (results.length!=0) {
+                const message = 'This position has already create.';
+                return res.status(200).json({ message: message });
+            } else  {
+                const sqlQuery = `
+                INSERT INTO positions ( positions_name, team_id ) 
+                VALUES ( '${position_name}', '${team_id}' )
+            `
+            sql.query(sqlQuery, async (err, results) => {
+                const message = 'success';
+                const status = 200;
+                return res.status(status).json({ message: message});
+            })
+        }
+        
+    });
+} catch (err) {
+    const message = 'server error!';
+    const status = 500;
+    return res.status(status).json({ message: message, code: status });
+}
 
 };
 
@@ -60,7 +76,26 @@ exports.updatePosition = (req, res) => {
     const position_id = req.body.position_id;
     const team_id = req.body.team_id;
     try {
-        
+        const sqlQuery = `
+        SELECT positions_name
+        FROM positions
+        WHERE positions_name = '${position_name}'; 
+        `
+        sql.query(sqlQuery, async (err, results) => {
+            console.log(results);
+            if (err) {
+                // throw err
+                const message = 'server error!';
+                const status = 500;
+                return res.status(status).json({ message: message, code: status, err: err });
+
+            }
+            console.log(results.length);
+
+            if (results.length!=0) {
+                const message = 'This position has already create.';
+                return res.status(200).json({ message: message });
+            } else  {
         const sqlQuery = `
             UPDATE positions
             SET positions_name='${position_name}',
@@ -68,22 +103,19 @@ exports.updatePosition = (req, res) => {
             WHERE id='${position_id}'
         `
         sql.query(sqlQuery, async (err, results) => {
-
-            if (err) {
-                // throw err
-                const message = 'server error!';
-                const status = 500;
-                return res.status(status).json({ message: message, code: status, err: err });
-            } else {
-                const message = 'edit success!';
-                return res.status(200).json({ status: 200, message: message, results: results });
-            }
-        });
-    } catch (err) {
-            const message = 'server error!';
-            const status = 500;
-            return res.status(status).json({ message: message, code: status });
+            const message = 'success';
+            const status = 200;
+            return res.status(status).json({ message: message});
+        })
     }
+    
+});
+} catch (err) {
+const message = 'server error!';
+const status = 500;
+return res.status(status).json({ message: message, code: status });
+}
+
 };
 
 exports.deletePosition = (req, res) => {

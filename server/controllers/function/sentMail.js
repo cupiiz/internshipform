@@ -1,13 +1,40 @@
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey('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');
 
-exports.setMail = ( email ) => {
-    const msg = {
-        to: email,
-        from: 'test@example.com',
-        subject: 'Register success',
-        text: 'Thank you for your application. We will get back to you as soon as possible. Please check your spam folder regularly as e-mails from Thailand might end up there.',
-        html: 'Thank you for your application. We will get back to you as soon as possible. Please check your spam folder regularly as e-mails from Thailand might end up there.',
-    };
-    sgMail.send(msg);
+// main.js
+
+
+const nodemailer = require('nodemailer');
+
+
+
+
+// setup mail transporter service
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'chumunza@gmail.com', // your email
+    pass: '11151996ju_ku'              // your password
+  }
+});
+
+// setup email data with unicode symbols
+exports.sendMail= ( email ) => {
+const mailOptions = {
+  from: 'chumunza@gmail.com',              // sender
+  to: email,              // list of receivers
+  subject: 'Application Reply',            // Mail subject
+  html: 'Thank you for your regist we will get back to you soon.' // HTML body
+};
+transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
 }
+
+
+// send mail with defined transport object
+
+
+

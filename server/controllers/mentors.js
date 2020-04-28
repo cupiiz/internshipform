@@ -4,7 +4,7 @@ exports.getMentors = (req, res) => {
 
     try {
         const sqlQuery = `
-            SELECT id AS mentor_id, firstname, lastname, email, phonenumber
+            SELECT id AS mentor_id, mentor_firstname, mentor_lastname, mentor_email, mentor_phonenumber
             FROM therunway_internship.mentors
             
         `
@@ -34,7 +34,7 @@ exports.createMentors = (req, res) => {
     
     try {
         const sqlQuery = `
-            INSERT INTO mentors ( firstname,lastname,email,phonenumber ) 
+            INSERT INTO mentors ( mentor_firstname,mentor_lastname,mentor_email,mentor_phonenumber ) 
             VALUES ( '${mentor_firstname}', '${mentor_lastname}', '${mentor_email}', '${mentor_phonenumber}' )
         `
         sql.query(sqlQuery, async (err, results) => {
@@ -66,10 +66,10 @@ exports.updateMentors = (req, res) => {
     try {
         const sqlQuery = `
             UPDATE mentors
-            SET firstname ='${mentor_firstname}',
-            lastname ='${mentor_lastname}',
-            email ='${mentor_email}',
-            phonenumber ='${mentor_phonenumber}'
+            SET mentor_firstname ='${mentor_firstname}',
+            mentor_lastname ='${mentor_lastname}',
+            mentor_email ='${mentor_email}',
+            mentor_phonenumber ='${mentor_phonenumber}'
             
             WHERE id='${mentor_id}'
         `

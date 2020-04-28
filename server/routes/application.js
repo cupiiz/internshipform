@@ -10,7 +10,10 @@ const router = express.Router();
 
 router.get('/application/get', applicationControllerDB.getApplication);
 router.post('/application/create', applicationControllerDB.createApplication);
-router.post('/application/edit', applicationControllerDB.updateApplication);
-router.post('/application/delete', applicationControllerDB.deleteApplication);
 
+router.post('/application/delete', applicationControllerDB.deleteApplication);
+router.post('/application/statuschange', applicationControllerDB.statusChange);
+router.get('/application/getapproved', applicationControllerDB.getApprovedApplication);
+router.post('/application/addmentors', applicationControllerDB.AddMentors);
+router.get('/application/getdecline', applicationControllerDB.getDeclineApplication);
 module.exports = router;

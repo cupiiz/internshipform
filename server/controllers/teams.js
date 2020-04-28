@@ -15,65 +15,109 @@ exports.getTeam = (req, res) => {
             }
         });
     } catch (err) {
-            const message = 'server error!';
-            const status = 500;
-            return res.status(status).json({ message: message, code: status });
+        const message = 'server error!';
+        const status = 500;
+        return res.status(status).json({ message: message, code: status });
     }
 
 };
 
 exports.createTeam = (req, res) => {
     const team_name = req.body.team_name;
-    try {     
+
+
+    try {
         const sqlQuery = `
-            INSERT INTO teams ( team_name ) 
-            VALUES ( '${team_name}' )
+        SELECT team_name
+        FROM teams
+        WHERE team_name = '${team_name}';
         `
+
         sql.query(sqlQuery, async (err, results) => {
+            console.log(results);
+
 
             if (err) {
                 // throw err
                 const message = 'server error!';
                 const status = 500;
                 return res.status(status).json({ message: message, code: status, err: err });
-            } else {
-                return res.status(200).json({ status: 200, results: results });
+
             }
+            console.log(results.length);
+
+            if (results.length != 0) {
+                const message = 'This team has already create.';
+                return res.status(200).json({ message: message });
+            } else {
+                const sqlQuery = `
+                    INSERT INTO teams ( team_name ) 
+                    VALUES ( '${team_name}' )
+                `
+                sql.query(sqlQuery, async (err, results) => {
+                    const message = 'success';
+                    const status = 200;
+                    return res.status(status).json({ message: message });
+                })
+            }
+
         });
     } catch (err) {
-            const message = 'server error!';
-            const status = 500;
-            return res.status(status).json({ message: message, code: status });
+        const message = 'server error!';
+        const status = 500;
+        return res.status(status).json({ message: message, code: status });
     }
 
 };
+
 
 exports.updateTeam = (req, res) => {
     const team_id = req.body.team_id;
     const team_name = req.body.team_name;
     try {
         const sqlQuery = `
-            UPDATE teams
-            SET team_name='${team_name}' 
-            WHERE id='${team_id}'
+        SELECT team_name
+        FROM teams
+        WHERE team_name = '${team_name}';
         `
+
         sql.query(sqlQuery, async (err, results) => {
+            console.log(results);
+
 
             if (err) {
                 // throw err
                 const message = 'server error!';
                 const status = 500;
                 return res.status(status).json({ message: message, code: status, err: err });
-            } else {
-                const message = 'edit success!';
-                return res.status(200).json({ status: 200, message: message, results: results });
+
             }
+            console.log(results.length);
+
+            if (results.length != 0) {
+                const message = 'This team has already create.';
+                return res.status(200).json({ message: message });
+            } else {
+
+                const sqlQuery = `
+                UPDATE teams
+                SET team_name='${team_name}' 
+                WHERE id='${team_id}'
+                `
+                sql.query(sqlQuery, async (err, results) => {
+                    const message = 'success';
+                    const status = 200;
+                    return res.status(status).json({ message: message });
+                })
+            }
+
         });
     } catch (err) {
-            const message = 'server error!';
-            const status = 500;
-            return res.status(status).json({ message: message, code: status });
+        const message = 'server error!';
+        const status = 500;
+        return res.status(status).json({ message: message, code: status });
     }
+
 };
 
 exports.deleteTeam = (req, res) => {
@@ -96,8 +140,8 @@ exports.deleteTeam = (req, res) => {
             }
         });
     } catch (err) {
-            const message = 'server error!';
-            const status = 500;
-            return res.status(status).json({ message: message, code: status });
+        const message = 'server error!';
+        const status = 500;
+        return res.status(status).json({ message: message, code: status });
     }
 };
